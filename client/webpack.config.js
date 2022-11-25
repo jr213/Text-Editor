@@ -18,12 +18,63 @@ module.exports = () => {
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-      
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'Jate'
+      }),
+      new GenerateSW({
+        runtimeCaching: [
+          {
+          urlPattern: '/',
+          handler: 'cacheFirst',
+          options: {
+            cacheName: 'text'
+          }
+        }
+        ]
+      }),
+      new WebpackPwaManifest ({
+        name: 'Note Taker',
+        shortName: 'Jade',
+        background_color: '#272822',
+        fingerprints: false,
+        start_url: './',
+        publicPath: './',
+        icons: [
+          {
+            src: path.resolve('./favicon.ico'),
+            sizes: [48],
+            destination: path.join('assets', 'icons')
+          },
+          {
+            src: path.resolve('./src/images/logo.png'),
+            sizes: [500],
+            destination: path.join('assets', 'icons')
+          }
+        ]
+      })
     ],
 
     module: {
       rules: [
-        
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|ico|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
+        },
+        {
+          test: /\.m?js$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+            },
+          },
+        },
       ],
     },
   };
